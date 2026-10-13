@@ -51,13 +51,18 @@ pub struct FdTable {
     // TODO: Design the internal structure
     // Hint: use Vec<Option<Arc<dyn File>>>
     //       the index is the fd number, None means the fd is closed or unallocated
+    slots: Vec<Option<Arc<dyn File>>>,
+    count: usize,
 }
 
 impl FdTable {
     /// Create an empty fd table
     pub fn new() -> Self {
         // TODO
-        todo!()
+        Self {
+            slots: Vec::new(),
+            count: 0,
+        }
     }
 
     /// Allocate a new fd, return the fd number.
@@ -65,25 +70,50 @@ impl FdTable {
     /// Prefers reusing the smallest closed fd number; if no free slot, appends to the end.
     pub fn alloc(&mut self, file: Arc<dyn File>) -> usize {
         // TODO
-        todo!()
+        for (fd, slot) in self.slots.iter_mut().enumerate() {
+            if slot.is_none() {
+                *slot = Some(file);
+                self.count += 1;
+                return fd;
+            }
+        }
+
+        self.slots.push(Some(file));
+        self.count += 1;
+        self.slots.len() - 1
     }
 
     /// Get the file object for an fd. Returns None if the fd doesn't exist or is closed.
     pub fn get(&self, fd: usize) -> Option<Arc<dyn File>> {
         // TODO
-        todo!()
+        match self.slots.get(fd) {
+            Some(Some(file)) => Some(Arc::clone(file)),
+            _ => None,
+        }
     }
 
     /// Close an fd. Returns true on success, false if the fd doesn't exist or is already closed.
     pub fn close(&mut self, fd: usize) -> bool {
         // TODO
-        todo!()
+        match self.slots.get_mut(fd) {
+            Some(file) => {
+                if file.is_none() {
+                    false
+                }else {
+                    *file = None;
+                    self.count -= 1;
+                    true
+                }
+            },
+
+            None => false,
+        }
     }
 
     /// Return the number of currently allocated fds (excluding closed ones)
     pub fn count(&self) -> usize {
         // TODO
-        todo!()
+        self.count
     }
 }
 
