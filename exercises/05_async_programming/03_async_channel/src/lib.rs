@@ -56,7 +56,7 @@ pub async fn fan_in(n_producers: usize) -> Vec<String> {
     for id in 0..n_producers {
         let tx = tx.clone();
         producers.push(tokio::spawn(async move {
-            tx.send(format!("producer {}: message", id)).await;
+            let _ = tx.send(format!("producer {}: message", id)).await;
         }));
     }
 
