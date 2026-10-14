@@ -2,8 +2,8 @@
   "schema": 1,
   "courseId": 2074,
   "repository": "LearningOS/2026a-oscamp-base-rainringring",
-  "commit": "0ca0c880b417c1354aafef9892b835ca89b28093",
-  "score": 86,
+  "commit": "5c0beb32a55036f5d8c3e59840f9820607335578",
+  "score": 93,
   "totalScore": 100,
   "exercises": [
     {
@@ -149,16 +149,16 @@
     {
       "name": "pte_flags",
       "max": 3,
-      "score": 0,
-      "status": "fail",
-      "exitCode": 101
+      "score": 3,
+      "status": "pass",
+      "exitCode": 0
     },
     {
       "name": "page_table_walk",
       "max": 4,
-      "score": 0,
-      "status": "fail",
-      "exitCode": 101
+      "score": 4,
+      "status": "pass",
+      "exitCode": 0
     },
     {
       "name": "multi_level_pt",
@@ -176,9 +176,9 @@
     }
   ],
   "student": "rainringring",
-  "runId": "38553948025",
+  "runId": "38594738394",
   "runAttempt": "1",
   "upload": {
-    "status": "accepted"
+    "status": "pending"
   }
 }
