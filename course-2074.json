@@ -2,8 +2,8 @@
   "schema": 1,
   "courseId": 2074,
   "repository": "LearningOS/2026a-oscamp-base-rainringring",
-  "commit": "5c0beb32a55036f5d8c3e59840f9820607335578",
-  "score": 93,
+  "commit": "5308ae28ce51af1cb7117a6f486cec7808c6e189",
+  "score": 95,
   "totalScore": 100,
   "exercises": [
     {
@@ -100,9 +100,9 @@
     {
       "name": "rwlock",
       "max": 5,
-      "score": 5,
-      "status": "pass",
-      "exitCode": 0
+      "score": 0,
+      "status": "timeout",
+      "exitCode": 124
     },
     {
       "name": "stack_coroutine",
@@ -163,22 +163,22 @@
     {
       "name": "multi_level_pt",
       "max": 4,
-      "score": 0,
-      "status": "fail",
-      "exitCode": 101
+      "score": 4,
+      "status": "pass",
+      "exitCode": 0
     },
     {
       "name": "tlb_sim",
       "max": 3,
-      "score": 0,
-      "status": "fail",
-      "exitCode": 101
+      "score": 3,
+      "status": "pass",
+      "exitCode": 0
     }
   ],
   "student": "rainringring",
-  "runId": "38594738394",
+  "runId": "38704695821",
   "runAttempt": "1",
   "upload": {
-    "status": "accepted"
+    "status": "pending"
   }
 }
