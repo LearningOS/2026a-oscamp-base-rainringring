@@ -68,18 +68,18 @@ impl<T> RwLock<T> {
             let s = self.state.load(Ordering::Acquire);
             
             if s & (WRITER_HOLDING | WRITER_WAITING) != 0 {
-                core::hint::spin_loop();
+                spin_loop();
                 continue;
             }
 
             if (s & READER_MASK) == READER_MASK {
-                core::hint::spin_loop();
+                spin_loop();
                 continue;
             }
 
             match self.state.compare_exchange(s, s + 1, Ordering::AcqRel, Ordering::Acquire) {
                 Ok(_) => return RwLockReadGuard { lock: self },
-                Err(_) => core::hint::spin_loop(),
+                Err(_) => spin_loop(),
             }
         }
     }
@@ -92,19 +92,30 @@ impl<T> RwLock<T> {
     /// 3. Try compare_exchange(WRITER_WAITING, WRITER_HOLDING, ...) to take the lock; or compare_exchange(0, WRITER_HOLDING, ...) if a writer just released.
     /// 4. On success return RwLockWriteGuard { lock: self }.
     pub fn write(&self) -> RwLockWriteGuard<'_, T> {
-        // TODO
-        self.state.fetch_or(WRITER_WAITING, Ordering::Release);
-
         loop {
+            // Announce that a writer is waiting so new readers block (writer-priority).
+            // Re-asserted every iteration: a releasing writer clears this bit, and if we
+            // let it stay cleared we could spin forever below.
+            self.state.fetch_or(WRITER_WAITING, Ordering::Release);
+
             let s = self.state.load(Ordering::Acquire);
             if s & (READER_MASK | WRITER_HOLDING) != 0 {
-                core::hint::spin_loop();
+                spin_loop();
                 continue;
             }
 
-            match self.state.compare_exchange(WRITER_WAITING, WRITER_HOLDING, Ordering::AcqRel, Ordering::Acquire) {
+            // No readers and no other writer. `s` is either WRITER_WAITING (our own bit,
+            // set above or by an earlier iteration) or 0 (a writer released and cleared
+            // the bit just before we re-asserted it) — accept both.
+            let expected = s & WRITER_WAITING;
+            match self.state.compare_exchange(
+                expected,
+                WRITER_HOLDING,
+                Ordering::AcqRel,
+                Ordering::Acquire,
+            ) {
                 Ok(_) => return RwLockWriteGuard { lock: self },
-                Err(_) => core::hint::spin_loop(),
+                Err(_) => spin_loop(),
             }
         }
     }
